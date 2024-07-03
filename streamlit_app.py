@@ -132,6 +132,18 @@ if auth_status[1]:
         value=(stay_date_range_start, stay_date_range_end),
         format="YYYY-MM-DD"
     )
+    color_range_min = st.selectbox(
+        'Color Range Min',
+        options=[str(i) for i in range(0, 51)],
+        index=0
+    )
+
+    color_range_max = st.selectbox(
+        'Color Range Max',
+        options=[str(i) for i in range(1, 51)],
+        index=25
+    )
+
     
     report_date_start, report_date_end = report_date_range_slider
     stay_date_start, stay_date_end = stay_date_range_slider
@@ -140,6 +152,8 @@ if auth_status[1]:
     stay_date_start = pd.to_datetime(stay_date_start)
     stay_date_end = pd.to_datetime(stay_date_end)
 
+    color_range_min = int(color_range_min)
+    color_range_max = int(color_range_max)
 
     
     filter_data = data[(data["report_date"] >= report_date_start) & (data["report_date"] <= report_date_end) & (data["stay_date"] >= stay_date_start) & (data["stay_date"] <= stay_date_end)]
@@ -154,8 +168,8 @@ if auth_status[1]:
     heatmap_df_true.sort_index(level=0, ascending=False, inplace=True)
     heatmap_df_error.sort_index(level=0, ascending=False, inplace=True)
 
-    zmin = min(heatmap_df_preds.min().min(), heatmap_df_true.min().min())
-    zmax = max(heatmap_df_preds.max().max(), heatmap_df_true.max().max())
+    # zmin = min(heatmap_df_preds.min().min(), heatmap_df_true.min().min())
+    # zmax = max(heatmap_df_preds.max().max(), heatmap_df_true.max().max())
 
 
     trace_preds = go.Heatmap(
@@ -163,8 +177,8 @@ if auth_status[1]:
         y=heatmap_df_preds.columns,
         x=heatmap_df_preds.index,
         colorscale='gray',
-        zmin=zmin,
-        zmax=zmax,
+        zmin=color_range_min,
+        zmax=color_range_max,
         visible=False 
     )
 
@@ -173,8 +187,8 @@ if auth_status[1]:
         y=heatmap_df_true.columns,
         x=heatmap_df_true.index,
         colorscale='gray',
-        zmin=zmin,
-        zmax=zmax
+        zmin=color_range_min,
+        zmax=color_range_max,
     )
 
     trace_error = go.Heatmap(
@@ -182,9 +196,7 @@ if auth_status[1]:
         y=heatmap_df_error.columns,
         x=heatmap_df_error.index,
         colorscale='rdbu',
-        visible=False ,
-        zmax = heatmap_df_error.max().max(),
-        zmin = -(heatmap_df_error.max().max())
+        visible=False  
     )
 
 
