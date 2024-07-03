@@ -202,37 +202,34 @@ if auth_status[1]:
 
     fig = go.Figure(data=[trace_true, trace_preds, trace_error])
 
+    # Define buttons for layout
     buttons = [
-        dict(
-            label='Ground Truths',
+        dict(label='Show Ground Truths',
             method='update',
-            args=[{'visible': [True, False, False]}]
-        ),
-        dict(
-            label='Predictions',
+            args=[{'visible': [True, False, False]}]),  # Enable only Ground Truths
+        dict(label='Show Predictions',
             method='update',
-            args=[{'visible': [False, True, False]}]
-        ),
-        dict(
-            label='Errors',
+            args=[{'visible': [False, True, False]}]),  # Enable only Predictions
+        dict(label='Show Errors',
             method='update',
-            args=[{'visible': [False, False, True]}]
-        )
+            args=[{'visible': [False, False, True]}])   # Enable only Errors
     ]
 
-
+    # Add button layout to the figure
     fig.update_layout(
-        title=f'Heatmap Analysis, Stay Date Range: {report_date_start} to {report_date_end}',
-        title_x=0.45,
+        title=f'Heatmap Analysis, Stay Date Range: {stay_date_start} to {stay_date_end}',
+        title_x=0.5,
         updatemenus=[{
-            'type': 'dropdown',
-            'x': 1.1,
+            'type': 'buttons',
+            'direction': 'right',
+            'x': 0.65,
             'y': 1.15,
             'showactive': True,
-            'active': 0,
             'buttons': buttons
         }]
     )
+
+    # Update axis labels
     fig.update_xaxes(title_text="Stay Date")
     fig.update_yaxes(title_text="Report Date")
     st.plotly_chart(fig)
