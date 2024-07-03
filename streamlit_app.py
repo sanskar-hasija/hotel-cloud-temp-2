@@ -182,7 +182,9 @@ if auth_status[1]:
         y=heatmap_df_error.columns,
         x=heatmap_df_error.index,
         colorscale='rdbu',
-        visible=False  
+        visible=False ,
+        zmax = heatmap_df_error.max().max(),
+        zmin = -(heatmap_df_error.max().max())
     )
 
 
