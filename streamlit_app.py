@@ -248,7 +248,8 @@ if auth_status[1]:
         stay_date = selected_points[0]['x']
         report_date = selected_points[0]['y']
         with st.columns(3)[1]:
-            st.write(f"Stay Date: {stay_date}, Report Date: {report_date}")
+            st.write(f"Stay Date: {stay_date}")
+            st.write(f"Report Date: {report_date}")
 
     sample_stay_df = data[data["stay_date"] == stay_date][["individual_reservation_change_3_actual", "individual_reservation_change_3_predicted", "lead_in", "error"]]
 
