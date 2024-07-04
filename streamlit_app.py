@@ -223,7 +223,7 @@ if auth_status[1]:
 
     # Add button layout to the figure
     fig.update_layout(
-        title=f'Heatmap Analysis, Stay Date Range: {stay_date_start} to {stay_date_end}',
+        title=f'Heatmap Analysis, Stay Date Range: {stay_date_start.strftime("%m/%d/%Y")} to {stay_date_end.strftime("%m/%d/%Y")}',
         title_x=0.5,
         updatemenus=[{
             'type': 'buttons',
