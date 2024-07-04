@@ -170,6 +170,8 @@ if auth_status[1]:
 
     # zmin = min(heatmap_df_preds.min().min(), heatmap_df_true.min().min())
     # zmax = max(heatmap_df_preds.max().max(), heatmap_df_true.max().max())
+    z_range = max(abs(heatmap_df_error.min().min()), abs(heatmap_df_error.max().max()))
+
 
 
     trace_preds = go.Heatmap(
@@ -196,7 +198,9 @@ if auth_status[1]:
         y=heatmap_df_error.columns,
         x=heatmap_df_error.index,
         colorscale='rdbu',
-        visible=False  
+        visible=False  ,
+        zmin=-z_range,
+        zmax=z_range
     )
 
 
