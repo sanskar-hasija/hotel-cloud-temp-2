@@ -5,6 +5,7 @@ import yaml
 import pandas as pd
 import os 
 import glob
+from streamlit_plotly_events import plotly_events
 
 # Define the YAML configuration for authentication
 config = {
@@ -132,6 +133,7 @@ if auth_status[1]:
         value=(stay_date_range_start, stay_date_range_end),
         format="YYYY-MM-DD"
     )
+
     color_range_min = st.selectbox(
         'Color Range Min',
         options=[str(i) for i in range(0, 51)],
@@ -236,15 +238,17 @@ if auth_status[1]:
     # Update axis labels
     fig.update_xaxes(title_text="Stay Date")
     fig.update_yaxes(title_text="Report Date")
-    st.plotly_chart(fig)
+    
+    selected_points = plotly_events(fig, click_event=True, hover_event=False, select_event=True)
+    
+    stay_date = data["stay_date"].iloc[100]
+    report_date = data["report_date"].iloc[100]
 
-
-    stay_date_dropdown = st.selectbox(
-        'Stay Date',
-        options=stay_date_range_options,
-        index=stay_date_range_options.index('2023-02-18')
-    )
-    stay_date = pd.to_datetime(stay_date_dropdown)
+    if selected_points:
+        stay_date = selected_points[0]['x']
+        report_date = selected_points[0]['y']
+        with st.columns(3)[1]:
+            st.write(f"Stay Date: {stay_date}, Report Date: {report_date}")
 
     sample_stay_df = data[data["stay_date"] == stay_date][["individual_reservation_change_3_actual", "individual_reservation_change_3_predicted", "lead_in", "error"]]
 
@@ -282,6 +286,35 @@ if auth_status[1]:
     st.plotly_chart(fig)
 
 
+    sample_report_df = data[data["report_date"] == report_date][["individual_reservation_change_3_actual", "individual_reservation_change_3_predicted", "lead_in", "error"]]
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(x=sample_report_df["lead_in"],
+                            y=sample_report_df["individual_reservation_change_3_predicted"],
+                            mode='markers+lines',
+                            marker=dict(color='red', symbol='circle'),
+                            name='Predicted'))
+    
+    fig.add_trace(go.Scatter(x=sample_report_df["lead_in"],
+                            y=sample_report_df["individual_reservation_change_3_actual"],
+                            mode='markers+lines',
+                            marker=dict(color='blue', symbol='circle-open', line=dict(color='white')),
+                            name='Actual'))
+    
+    fig.add_trace(go.Bar(x=sample_report_df["lead_in"],
+                        y=abs(sample_report_df["error"]),
+                        marker=dict(color='red', opacity=0.2),
+                        name='Error'))
+    
+    fig.update_layout(
+        title=f"Actual and Predicted Pickup, Report Date: {report_date}",
+        xaxis_title="Lead In",
+        yaxis_title="3D Look Ahead Individual Reservations",
+        legend_title="Legend",
+        title_x = 0.45,
+    )
+
+    st.plotly_chart(fig)
 
 elif auth_status[1] == False:
     st.error('Username/password is incorrect')
